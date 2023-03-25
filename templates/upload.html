@@ -1,0 +1,320 @@
+<form action="{% url 'upload_folder'%}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="file_folder">Upload data files for the training:</label>
+    <input type="file" name="file_folder" id="file_folder">
+    <br>
+    {% if uploaded %}
+    <div id="upload-message">
+      <p>Your file has been successfully uploaded.</p>
+    </div>
+    {% endif %}
+    <!-- <script>
+      setTimeout(function(){
+        var uploadMessage = document.getElementById("upload-message");
+        if (uploadMessage) {
+          uploadMessage.style.display = "none";
+        }
+      }, 10000); // Set the time in milliseconds for the message to display before disappearing
+    </script> -->
+    <br>
+    <p id="username" name="username">{{user.username}}</p>
+ <button type="submit" onclick="submitForm()">Upload</button>
+</form>
+<!-- 
+<form action="{% url 'upload_folder' %}" method="POST">
+  {% csrf_token %}
+<h1>Algorithm Parameter Input</h1>
+<p>Select a traditional classifier:</p>
+<select id="algorithm" name="algorithm" onchange="displayInputs()">
+  <option value="">--Select--</option>
+  <option value="DT">Decision Tree</option>
+  <option value="KNN">K-Nearest Neighbors</option>
+  <option value="SVM">Support Vector Machine</option>
+  <option value="RF">Random Forest</option>
+  <option value="NB">Naive Bayes</option>
+</select>
+<br><br>
+<div id="inputFields"></div>
+<script>
+  function submitForm() {
+    // Get the form element
+    const form = document.querySelector('form');
+  
+    // Set the form's action attribute to the URL for submitting the form data
+    form.action = "{% url 'success' %}";
+  
+    // Submit the form
+    form.submit();
+  }
+  function displayInputs() {
+    const algorithm = document.getElementById("algorithm").value;
+    let inputsHTML = "";
+    if (algorithm === "DT") {
+      inputsHTML += `
+        <p>Enter max depth:</p>
+        <input type="number" id="max_depth" name="max_depth"><br>
+        <p>Enter min samples leaf:</p>
+        <input type="number" id="min_samples_leaf" name="min_samples_leaf"><br>
+        <p>Enter min samples split:</p>
+        <input type="number" id="min_samples_split" name="min_samples_split"><br>
+      `;
+    } else if (algorithm === "KNN") {
+      inputsHTML += `
+        <p>Enter n neighbors:</p>
+        <input type="number" id="n_neighbors" name="n_neighbors"><br>
+        <p>Choose algorithm:</p>
+        <select id="algorithm_knn" name="algorithm_knn">
+          <option value="auto">auto</option>
+          <option value="ball_tree">ball_tree</option>
+          <option value="kd_tree">kd_tree</option>
+          <option value="brute">brute</option>
+        </select><br>
+        <p>Enter leaf size:</p>
+        <input type="number" id="leaf_size" name="leaf_size"><br>
+      `;
+    } else if (algorithm === "SVM") {
+      inputsHTML += `
+        <p>Enter C:</p>
+        <input type="number" id="C" name="C"><br>
+        <p>Enter kernel:</p>
+        <select id="kernel" name="kernel">
+          <option value="linear">Linear</option>
+          <option value="rbf">RBF</option>
+          <option value="poly">Polynomial</option>
+        </select><br>
+        <p>Enter gamma:</p>
+        <input type="number" id="gamma" name="gamma"><br>
+      `;
+    } else if (algorithm === "RF") {
+      inputsHTML += `
+        <p>Enter n estimators:</p>
+        <input type="number" id="n_estimators" name="n_estimators"><br>
+        <p>Enter max depth:</p>
+        <input type="number" id="max_depth_rf" name="max_depth_rf"><br>
+        <p>Enter min samples leaf:</p>
+        <input type="number" id="min_samples_leaf_rf" name="min_samples_leaf_rf"><br>
+      `;
+    } else if (algorithm === "NB") {
+      inputsHTML += `
+        <p>EEnter priors (separated by commas or spaces):</p>
+        <input type="text" id="priors" name="priors"><br>
+        <p>Enter var smoothing:</p>
+        <input type="number" id="var_smoothing" name="var_smoothing"><br>
+      `;
+    }
+    document.getElementById("inputFields").innerHTML = inputsHTML;
+  }
+</script>
+<br>
+<button type="button" onclick="submitForm()">Train</button>
+</form>
+
+{% if train_acc %}
+  <div id="accuracy-message">
+    <p>Training accuracy: {{ train_acc }}</p>
+  </div>
+{% endif %} -->
+
+<!-- <script>
+const accuracySpan = document.getElementById('train_acc');
+accuracySpan.innerHTML = train_acc;
+</script>
+<span id="accuracy"></span> -->
+
+<!-- 
+<button type="submit" onclick="submitForm()">Download</button> -->
+
+
+
+<!-- 
+<script>
+  
+  const dictionary = {
+  'DT': ['max_depth', 'min_samples_leaf', 'min_samples_split'],
+  'KNN': ['n_neighbors', 'algorithm', 'leaf_size'],
+  'SVM': ['C', 'kernel', 'gamma'],
+  'RF': ['n_estimators', 'max_depth', 'min_samples_leaf'],
+  'NB': ['priors', 'var_smoothing']
+};
+
+const firstDropdown = document.getElementById("first-dropdown");
+const secondDropdown = document.getElementById("second-dropdown");
+const thirdDropdown = document.getElementById("third-dropdown");
+const forthDropdown = document.getElementById("forth-dropdown");
+const inputText = document.getElementById("input-text");
+const inputText2 = document.getElementById("input-text2");
+const inputText3 = document.getElementById("input-text3");
+const form = document.getElementById("my-form");
+
+function populateFirstDropdown() {
+  for (const key in dictionary) {
+    const option = document.createElement("option");
+    option.value = key;
+
+    option.textContent = key;
+    firstDropdown.appendChild(option);
+  }
+}
+
+function populateThirdDropdown() {
+  thirdDropdown.innerHTML = "";
+  
+  // Get the selected value from the first dropdown list
+  const selectedValue = firstDropdown.value;
+  
+  // Add a default "Select a parameter" option to the second dropdown list
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Select a parameter";
+  defaultOption.selected = true;
+  defaultOption.disabled = true;
+  thirdDropdown.appendChild(defaultOption);
+
+  // Add the options to the second dropdown list
+  for (const value of dictionary[selectedValue]) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    thirdDropdown.appendChild(option);
+  }
+
+}
+function populateForthDropdown() {
+  forthDropdown.innerHTML = "";
+  
+  // Get the selected value from the first dropdown list
+  const selectedValue = firstDropdown.value;
+  
+  // Add a default "Select a parameter" option to the second dropdown list
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Select a parameter";
+  defaultOption.selected = true;
+  defaultOption.disabled = true;
+  forthDropdown.appendChild(defaultOption);
+
+  // Add the options to the second dropdown list
+  for (const value of dictionary[selectedValue]) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    forthDropdown.appendChild(option);
+  }
+
+}
+// Function to populate the second dropdown list with the values of the selected key from the first dropdown list
+function populateSecondDropdown() {
+  // Clear the options from the second dropdown list
+  secondDropdown.innerHTML = "";
+  
+  // Get the selected value from the first dropdown list
+  const selectedValue = firstDropdown.value;
+  
+  // Add a default "Select a parameter" option to the second dropdown list
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Select a parameter";
+  defaultOption.selected = true;
+  defaultOption.disabled = true;
+  secondDropdown.appendChild(defaultOption);
+
+  // Add the options to the second dropdown list
+  for (const value of dictionary[selectedValue]) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    secondDropdown.appendChild(option);
+  }
+}
+
+
+// Call the populateFirstDropdown function when the page loads
+populateFirstDropdown();
+
+// Call the populateSecondDropdown function when the value of the first dropdown list changes
+firstDropdown.addEventListener("change", populateSecondDropdown);
+firstDropdown.addEventListener("change", populateThirdDropdown);
+firstDropdown.addEventListener("change", populateForthDropdown);
+
+// Function to submit the form with the selected parameter and input value
+function submitForm(event) {
+  event.preventDefault();
+  
+  const selectedParameter = secondDropdown.value;
+  const selectedParameter2 = thirdDropdown.value;
+  const selectedParameter3 = forthDropdown.value;
+  const inputParameterValue = inputText.value;
+  const inputParameterValue2 = inputText2.value;
+  const inputParameterValue3 = inputText3.value;
+  
+  // Set the values of the form fields
+  const parameterField = document.createElement("input");
+  parameterField.type = "hidden";
+  parameterField.name = "selected_parameter";
+  parameterField.value = selectedParameter;
+  
+  const inputField = document.createElement("input");
+  inputField.type = "hidden";
+  inputField.name = "input_value";
+  inputField.value = inputParameterValue;
+  
+  const inputField2 = document.createElement("input");
+  inputField2.type = "hidden";
+  inputField2.name = "input_value2";
+  inputField2.value = inputParameterValue2;
+  
+  const inputField3 = document.createElement("input");
+  inputField3.type = "hidden";
+  inputField3.name = "input_value3";
+  inputField3.value = inputParameterValue3;
+  form.appendChild(parameterField);
+  form.appendChild(inputField);
+  form.appendChild(inputField2);
+  form.appendChild(inputField3);
+  
+  // Submit the form
+  form.submit();
+
+  const data = {
+    'model': model,
+    'input-text': inputText,
+    'input-text2': inputText2,
+    'input-text3': inputText3,
+  };
+  const inputs = secondDropdownContainer.getElementsByTagName('select');
+  const inputText = document.getElementById('input-text').value;
+
+  const inputs2 = thirdDropdownContainer.getElementsByTagName('select');
+  const inputText2 = document.getElementById('input-text2').value;
+  
+  const inputs3 = forthDropdownContainer.getElementsByTagName('select');
+  const inputText3 = document.getElementById('input-text3').value;
+
+  for (let i = 0; i < inputs.length; i++) {
+    const input = inputs[i];
+    data[input.name] = input.value;
+  }
+  for (let i = 0; i < inputs2.length; i++) {
+    const input = inputs2[i];
+    data[input.name] = input.value;
+  }
+  for (let i = 0; i < inputs3.length; i++) {
+    const input = inputs3[i];
+    data[input.name] = input.value;
+  }
+  const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/uploadfiles');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('X-CSRFToken', csrfToken);
+  xhr.onload = function() {
+    // handle the response from the server
+  };
+  xhr.send(JSON.stringify(data));
+}
+
+// Call the submitForm function when the form is submitted
+form.addEventListener("submit", submitForm);
+
+</script> -->

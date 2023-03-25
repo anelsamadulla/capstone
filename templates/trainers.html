@@ -1,0 +1,15 @@
+<div>
+    {% csrf_token %}
+    {% for link in data %}
+        <p>{{ link.user }}</li>
+        <br>{{ link.datafolder }}
+        <a href="/test_upload/{{link.id}}"><button id="button1"> Change files</button></a> 
+        <a href="/train_model/"><button id="button4"> Train</button></a>
+        <a href="/download/{{link.model}}"><button id="button5"> Download</button></a>
+        <form method="post" action="{% url 'download_joblib_file' %}">
+            {% csrf_token %}
+            <input type="hidden" name="filename" value="{{link.model}}">
+            <button type="submit">Download</button>
+        </form>
+    {% endfor %}
+</div>
